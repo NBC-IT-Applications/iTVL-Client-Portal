@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+	<title>NBC TVL Invoice</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<style type="text/css">.invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+        font-size: 14px;
+        line-height: 16px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #555;
+    }
+    
+    .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+    }
+    
+    .invoice-box table td {
+        padding: 5px;
+        vertical-align: top;
+    }
+    
+    .invoice-box table tr td:nth-child(2) {
+        text-align: right;
+    }
+    
+    .invoice-box table tr.top table td {
+        padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.top table td.title {
+        font-size: 45px;
+        line-height: 45px;
+        color: #333;
+    }
+    
+    .invoice-box table tr.information table td {
+        padding-bottom: 40px;
+    }
+    
+    .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+    
+    .invoice-box table tr.details td {
+        padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.item td{
+        border-bottom: 1px solid #eee;
+    }
+    
+    .invoice-box table tr.item.last td {
+        border-bottom: none;
+    }
+    
+    .invoice-box table tr.total td:nth-child(2) {
+        border-top: 2px solid #eee;
+        font-weight: bold;
+    }
+    
+    @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+        
+        .invoice-box table tr.information table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
+    
+    /** RTL **/
+    .rtl {
+        direction: rtl;
+        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+    
+    .rtl table {
+        text-align: right;
+    }
+    
+    .rtl table tr td:nth-child(2) {
+        text-align: left;
+    }
+	</style>
+	<script>
+
+ if (sessionStorage['user']==null) {
+            window.location="index.html";
+        } 
+		
+</script>
+
+<script src="assets/theme/js/html2pdf.bundle.js"></script>
+
+</head>
+<script src="assets/theme/js/app.js"></script>
+
+
+<body>
+<center><button class="btn btn-primary" onclick="InvoiceBack()"> Back</button><button class="btn btn-success" onclick="generatePDF()">Print </button></center>
+
+<div class="invoice-box" id="invoice">
+<div style="font-size: 36px; border: 0.5px solid #eee;"><br>
+<center> Invoice
+
+<br><span style="font-size: 12px; "> <i>TV License</i> </span></center>
+</div>
+
+<table cellpadding="0" cellspacing="0" style="font-size: 13px; border: 1px solid #eee;">
+	<tbody>
+		<tr class="top">
+			<td colspan="2">
+			<table>
+				<tbody>
+					<tr style="font-size: 11px; ">
+						<td class="title"><img id="image" src="images/logo.png" style="width:100%; max-width:250px;" /></td>
+						<td>Namibian Broadcasting Corporation<br />
+						P O Box 321, Windhoek<br />
+						Tel: <span style="color: blue; "><u>+264 61 291 3111/ 2100</u></span><br />
+						Email: <span style="color: blue; "><u>tvlicence@nbc.na</u></span></td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+		<tr class="information">
+			<td colspan="2">
+			<table>
+				<tbody>
+					<tr>
+						<td>
+								<span id="customerDetails">
+								
+								</span>
+                            </td>
+                            <td>
+								<span id="idno"> </span><br><br>
+                                <span id="tvlno"> </span>
+                            </td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+		<tr class="heading">
+			<td>Item</td>
+			<td>Price</td>
+		</tr>
+		<tr class="item">
+			<td id="period"></td>
+			<td id="fee"></td>
+		</tr>
+		<tr class="item">
+			<td>Penalties</td>
+			<td id="penalty"></td>
+		</tr>
+		<!--
+			<tr class="item">
+                <td>No Of Tvs </td>
+                
+                <td id="no_tvs">
+                </td>
+            </tr>
+            -->
+		<tr class="total">
+			<td>Total:</td>
+			<td id="total"></td>
+		</tr>
+		<tr>
+			<td style="font-size: 11px;">Kindly take note:<br />
+			1. The payment of a TV licence is a legal obligation.<br />
+			2. Licence fees are payable on an annual basis.<br />
+			3. To avoid penalties, please pay the amount due before 1 November of the applicable renewal period.<br />
+			4. Kindly notify us if there are any problems with this invoice.<br />
+			5. A licence year means the period from the first day of October to the thirtieth day of September the following year after which the licence must be renewed. Alternatively, the licence holder must immediately dispose of his/her set and notify the NBC in writing.<br />
+			6. In addition to the relevant licence fee, any person who fails to take out a television licence will be required to pay an amount equal to 10% of the licence fee as a penalty in respect of every month or part thereof during which he/she failed to take out a licence, provided that the penalty does not exceed the licence fee.<br />
+			7. Any person who in any manner transfers a television set to another person must inform the NBC immediately of the new owner&rsquo;s name and address and of the date on which the television set changed hands. To avoid a fine, the new owner must take out a licence immediately.<br />
+			8. For any TV licence related questions, please call 061-291 3111 or 061-291 2100 or send an e-mail to <span style="color: blue; "><u>tvlicence@nbc.na </u></span> or a fax to <span style="color: blue; "><u> 061-250 755 / 061-225 838 </u></span>or a letter to nbc TV Licence, PO Box 321, Windhoek, Namibia. Clients can also visit the nbc website at www.nbc.na for access to the TV Licence User Portal and answers to frequently asked questions.</td>
+		</tr>
+		<tr>
+			<td style="font-size: 11px;">
+			<center><b>PLEASE IGNORE THIS INVOICE IF YOU PAID FOR THE RELEVANT RENEWAL PERIOD ALREADY.</b></center>
+			<br />
+			NBC TV Licence Banking Details:<br />
+			Bank: First National Bank of Namibia;<br />
+			Corporate Branch, Windhoek;<br />
+			Name of Account: NBC TV Licence;<br />
+			Branch Code: 281872;<br />
+			Bank Acc. No.: 620 611 996 02<br />
+			Please add your TV LICENCE ACCOUNT NUMBER or ID NUMBER in the reference field when making EFT payments and/or direct deposits and email your proof of payment to <span style="color: blue; "><u>tvlicence@nbc.na</u></span> or fax it to <span style="color: blue; "><u>061-225 838 / 061-250 755.</u></span></td>
+		</tr>
+	</tbody>
+</table>
+<!--
+		<table style="font-size: 11px; border: 1px solid #eee;">
+			<tr>
+				<td style="width:30%">
+					User:
+				</td>
+				<td style="width:30%">
+					Location:
+				</td>
+				<td style="width:30%">
+					Time
+				</td>
+			</tr>
+		</table>
+		
+		--></div>
+</body>
+
+<script>
+	LoadInvoice()
+</script>
+</html>
